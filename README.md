@@ -1,6 +1,7 @@
 # CourseManager
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.3.
+A project from Dio Inovation Course: Angular 8 Introduction
 
 ## Development server
 
