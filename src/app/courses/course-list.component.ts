@@ -1,3 +1,4 @@
+import { CourseService } from './course.service';
 import { Course } from './course';
 import { Component, OnInit } from '@angular/core';
 
@@ -8,31 +9,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CourseListComponent implements OnInit {
 
-  courses: Course[] = [];
+  filteredCourses: Course[] = [];
+
+  _courses: Course[] = [];
+  
+  _filterBy!: string;
+
+  constructor(private courseService: CourseService) {}  //instanciando o serviço CourseService através do Constructor e passando como um parametro
 
   ngOnInit(): void {
-    this.courses = [
-      {
-        id: 1,
-        name: 'Angular: Forms',
-        imageUrl: '../../assets/images/forms.png',
-        price: 99.99,
-        code: 'XPS-8796',
-        duration: 120,
-        rating: 4.5,
-        releaseDate: 'December, 2, 2019'
-      },
-      {
-        id: 2,
-        name: 'Angular: HTTP',
-        imageUrl: '../../assets/images/http.png',
-        price: 45.99,
-        code: 'LKL-1094',
-        duration: 80,
-        rating: 4,
-        releaseDate: 'December, 2, 2019'
-      }
-    ]
+    this._courses = this.courseService.retrieveAll();
+    this.filteredCourses = this._courses;
+  }
+
+  set filter(value: string){
+    this._filterBy = value;
+
+    this.filteredCourses = this._courses.filter((course: Course) => course.name.toLocaleLowerCase().indexOf(this._filterBy.toLocaleLowerCase()) > -1);
+  }
+
+  get filter(){
+    return this._filterBy;
   }
 
 }

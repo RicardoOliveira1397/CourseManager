@@ -11,7 +11,7 @@ import { StarComponent } from './star/star.component';
   declarations: [
     AppComponent,
     CourseListComponent,
-    StarComponent
+    StarComponent,
   ],
   imports: [
     BrowserModule,
