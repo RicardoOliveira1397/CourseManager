@@ -3,7 +3,7 @@ import { Course } from './course';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-course-list',
+  //selector: 'app-course-list', não é mais necessário utilizar o select porque esta sendo usado Rota  diretamente no AppModule
   templateUrl: './course-list.component.html',
   styleUrls: ['./course-list.component.css']
 })
@@ -20,6 +20,7 @@ export class CourseListComponent implements OnInit {
   ngOnInit(): void {
     this._courses = this.courseService.retrieveAll();
     this.filteredCourses = this._courses;
+    //console.log(`Filter: ${this.filter}`);
   }
 
   set filter(value: string){
@@ -29,7 +30,8 @@ export class CourseListComponent implements OnInit {
   }
 
   get filter(){
-    return this._filterBy;
+    //console.log('filterBy: ' + this._filterBy);
+    return this._filterBy
   }
 
 }
