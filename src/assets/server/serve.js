@@ -1,37 +1,61 @@
-// Serviços são interessantes para chamarem métodos de fora e no máximo variáveis estáticas que não irão mudar durante o processo do serviço, servem basicamente para executar uma única função e compartilhar para todas as instâncias que tenhamos
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from "@angular/core";
-import { Observable } from 'rxjs';
-import { Course } from "./course";
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
 
-@Injectable({
-    providedIn: 'root'      // Habilita esta classe para que seja possível a injeção de dependência e seja carregada como root
-})                          // root = seja carregada juntamente com o appModule... nosso módulo principal
+var currentUser;
 
-export class CourseService {
-
-    private coursesUrl: string = 'http://localhost:3100/api/courses';
-
-    constructor(private httpClient: HttpClient){}
-
-   retrieveAll(): Observable<Course[]> {                        //Observable é assíncrono
-       return this.httpClient.get<Course[]>(this.coursesUrl);   // o retorno de uma requisição http é um observable, um envelope onde é armazenado os dados e enviado
-   }
-
-   retrieveById(id: number): Observable<Course> {
-        return this.httpClient.get<Course>(`${this.coursesUrl}/${id}`);
-   }
-
-   save(course: Course): Observable<Course> {
-        if(course.id){
-            return this.httpClient.put<Course>(`${this.coursesUrl}/${course.id}`, course)
-        } else {
-           return this.httpClient.put<Course>(`${this.coursesUrl}`, course)
-        }
-   }
-
+var corsOptions = {
+  orgim: '/',
+  optionsSuccessStatus: 200
 }
-/* var COURSES: Course[] = [
+
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+
+app.listen(3100, () => {
+  console.log('Server Started!');
+});
+
+app.route('/api/courses').get((request, response) => {
+  response.send(COURSES);
+});
+
+app.route('/api/courses').post((request, response) => {
+  let course = request.body;
+
+  const firstId = COURSES ? Math.max.apply(null, COURSES.map(courseIterator => courseIterator.id)) + 1 : 1;
+  course.id = firstId;
+  COURSES.push(course);
+  
+
+  response.status(201).send(course);
+});
+
+app.route('/api/courses/:id').put((request, response) => {
+  const courseId = +request.params['id'];
+  const course = request.body;
+
+  const index = COURSES.findIndex(courseIterator => courseIterator.id === courseId);
+  COURSES[index] = course;
+
+  response.status(200).send(course);
+});
+
+app.route('/api/courses/:id').get((request, response) => {
+  const courseId = +request.params['id'];
+
+  response.status(200).send(COURSES.find(courseIterator => courseIterator.id === courseId));
+});
+
+app.route('/api/courses/:id').delete((request, response)=> {
+  const courseId = +request.params['id'];
+  COURSES = COURSES.filter(courseIterator => courseIterator.id !== courseId);
+  
+  response.status(204).send({});
+});
+
+var COURSES = [
     {
         id: 1,
         name: 'Angular: CLI',
@@ -87,5 +111,4 @@ export class CourseService {
         price: 56.99,
         imageUrl: '/assets/images/animations.png',
     }
-    
-];*/
+];
